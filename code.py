@@ -61,88 +61,20 @@ print("Connected to WiFi")
 pool = socketpool.SocketPool(wifi.radio)
 server = HTTPServer(pool)
 
-
-#  the HTML script
-#  setup as an f string
-#  this way, can insert string variables from code.py directly
-#  of note, use {{ and }} if something from html *actually* needs to be in brackets
-#  i.e. CSS style formatting
-def webpage():
-    html = """
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PicoW Test Server</title>
-</head>
-<body>
-    Pico W here.
-    
-    <div id="data">Hi</div>
-
-    <input type="button" id="led" value="LED">
-
-    <input type="button" id="Temperature" value="Get Temperature">
-    <span id="Tmp"></span>
-    
-</body>
-<script>
-    d = document;
-
-    d.getElementById("data").innerHTML = "Total";
-
-    ledStatus = "OFF";
-    ledButton = d.getElementById("led");
-    ledButton.addEventListener("click", makeRequest);
-
-    function makeRequest() {
-        let xR = new XMLHttpRequest();
-        xR.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                
-                console.log("Server Response:", this.responseText);
-                data = JSON.parse(this.responseText);
-                ledButton.value = data['status'] ? "ON" : "OFF";
-            }
-        }
-        let data = {};
-        ledStatus = ledStatus === "OFF" ? "ON" : "OFF";
-        data["action"] = ledStatus;
-        xR.open("POST", "led", true);
-        xR.send(JSON.stringify(data));
-    }
-
-    TButton = d.getElementById("Temperature");
-    TButton.addEventListener("click", getT);
-
-    function getT(){
-        let xR = new XMLHttpRequest();
-        xR.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                
-                console.log("Server Response:", this.responseText);
-                data = JSON.parse(this.responseText);
-                Tmp.innerHTML = data['value'];
-            }
-        }
-        let data = {};
-        data["action"] = "getT";
-        xR.open("POST", "T", true);
-        xR.send(JSON.stringify(data));
-    }
-</script>
-</html>
-    """
+# load web page
+def getWebpage():
+    with open("webpage.html", "r") as f:
+        html = f.read()
     return html
 
 #  route default static IP
 @server.route("/")
 def base(request: HTTPRequest):  # pylint: disable=unused-argument
-    #  serve the HTML f string
+    #  serve the HTML 
     #  with content type text/html
     with HTTPResponse(request, content_type=MIMEType.TYPE_HTML) as response:
-        response.send(f"{webpage()}")
+
+        response.send(getWebpage())
         
 
 #@server.route("/", method=HTTPMethod.GET)
@@ -158,9 +90,6 @@ def requestToArray(request):
 
 @server.route("/led", method=HTTPMethod.POST)
 def ledButton(request: HTTPRequest):
-    # raw_text = request.body.decode("utf8")
-    # print("Raw")
-    # data = json.loads(raw_text)
     data = requestToArray(request)
     print(f"data: {data} & action: {data['action']}")
     rData = {}
@@ -237,5 +166,6 @@ while True:
     except Exception as e:
         print(e)
         continue
+
 
 
