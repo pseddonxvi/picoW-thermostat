@@ -9,6 +9,7 @@ import busio
 import board
 import microcontroller
 import json
+from uPID import uPID
 
 
 from digitalio import DigitalInOut, Direction
@@ -36,6 +37,18 @@ led = DigitalInOut(board.LED)
 led.direction = Direction.OUTPUT
 led.value = False
 
+# relay
+relay = DigitalInOut(board.GP15)
+relay.direction = Direction.OUTPUT
+relay.value = False
+
+# set up PID
+dt = 2
+pid = uPID(setT=20, dt=dt, Kp=10.0, Ki=0.0, Kd=-100)
+# test = pid.check(thermo.read())
+# time.sleep(1)
+# test = pid.check(thermo.read())
+# print(f'test: {test}')
 
 #  function to convert celcius to fahrenheit
 #def c_to_f(temp):
@@ -115,6 +128,33 @@ def getTemperature(request: HTTPRequest):
     rData['value'] = T
     with HTTPResponse(request) as response:
         response.send(json.dumps(rData))
+
+@server.route("/getT", method=HTTPMethod.POST)
+def getTemperatureRecords(request: HTTPRequest):
+    data = requestToArray(request)
+    print(f"data: {data}")
+    rData = {}
+    if (data['timeFrame'] == "current"):
+        rData["item"] = "currentT"
+        rData['value'] = pid.T
+    elif (data['timeFrame'] == 'long'):
+        rData["item"] = "longT"
+        rData['value'] = pid.longT
+    with HTTPResponse(request) as response:
+        response.send(json.dumps(rData))
+
+@server.route("/relay", method=HTTPMethod.POST)
+def relaySwitch(request: HTTPRequest):
+    if relay.value:
+        relay.value = False
+    else:
+        relay.value = True
+    print(f'Relay: {relay.value}')
+    rData = {}
+    rData["item"] = "relay"
+    rData['value'] = relay.value
+    with HTTPResponse(request) as response:
+        response.send(json.dumps(rData))
     
 #  if a button is pressed on the site
 @server.route("/", method=HTTPMethod.POST)
@@ -164,8 +204,24 @@ while True:
         server.poll()
     # pylint: disable=broad-except
     except Exception as e:
-        print(e)
+        print(f'server error: {e}')
         continue
+
+    try:
+        if (pid.clock + pid.dt) < time.monotonic():
+            ctrl = pid.check(thermo.read())
+            if ctrl > 0:
+                relay.value = True
+            else:
+                relay.value = False
+            print(f'ctrl: {pid.ctrl} | n={len(pid.T)}')
+            pid.clock = time.monotonic()
+    except Exception as e:
+        print(f'pid error: {e}')
+        break
+
+
+
 
 
 

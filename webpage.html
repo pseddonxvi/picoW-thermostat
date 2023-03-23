@@ -10,10 +10,26 @@
     
     <div id="data">Hi</div>
 
-    <input type="button" id="led" value="LED">
-
+    LED: <input type="button" id="led" value="LED">
+    <br>
     <input type="button" id="Temperature" value="Get Temperature">
     <span id="Tmp"></span>
+    <br>
+    Relay: <input type="button" id="Relay" value="Switch">
+
+    <div>
+        Sous:<br>
+        <div>
+            <input type="button" id="currentT" value="Current Temperature Record"><br>
+            <span id="currentTData"></span>
+        </div>
+        <div>
+            <input type="button" id="longT" value="Long-Term Temperature Record"><br>
+            <span id="longTData"></span>
+        </div>
+        
+
+    </div>
     
 </body>
 <script>
@@ -60,5 +76,56 @@
         xR.open("POST", "T", true);
         xR.send(JSON.stringify(data));
     }
+
+    relayButton = d.getElementById("Relay");
+    relayButton.addEventListener("click", relaySwitch);
+
+    function relaySwitch(){
+        let xR = new XMLHttpRequest();
+        xR.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                
+                console.log("Server Response:", this.responseText);
+                data = JSON.parse(this.responseText);
+                Relay.value = data['value'] ? "ON" : "OFF";
+            }
+        }
+        let data = {};
+        data["action"] = "switchR";
+        xR.open("POST", "relay", true);
+        xR.send(JSON.stringify(data));
+    }
+
+    currentT.addEventListener("click", function(){
+        getTRecords("current");
+    });
+    longT.addEventListener("click", function(){
+        getTRecords("long");
+    });
+
+    function getTRecords(timeFrame){
+        let xR = new XMLHttpRequest();
+        xR.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                
+                console.log("Server Response:", this.responseText);
+                data = JSON.parse(this.responseText);
+                if (data['item'] === "currentT"){
+                    currentTData.innerHTML = data['value'];
+                }
+                if (data['item'] === "longT"){
+                    longTData.innerHTML = data['value'];
+                }
+
+                //Relay.value = data['value'] ? "ON" : "OFF";
+            }
+        }
+        let data = {};
+        data["action"] = "getTRecords";
+        data["timeFrame"] = timeFrame;
+        xR.open("POST", "getT", true);
+        xR.send(JSON.stringify(data));
+    }
+
 </script>
 </html>
