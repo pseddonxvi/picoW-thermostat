@@ -50,6 +50,49 @@ pid = uPID(setT=56, dt=dt, Kp=10.0, Ki=0.0, Kd=-100)
 # test = pid.check(thermo.read())
 # print(f'test: {test}')
 
+
+
+def uThermostat(thermo, relay, pid):
+    clock = time.monotonic() #  time.monotonic() holder for server ping
+
+    print("starting 30sec loop")
+    print()
+
+    while True:
+        try:
+            #  every 30 seconds, ping server & update temp reading
+            if (clock + 30) < time.monotonic():
+                if wifi.radio.ping(ping_address) is None:
+                    print("lost connection")
+                else:
+                    print("connected")
+                clock = time.monotonic()
+                #  comment/uncomment for desired units
+            server.poll()
+        # pylint: disable=broad-except
+        except Exception as e:
+            print(f'server error: {e}')
+            continue
+
+        try:
+            if (pid.clock + pid.state['dt']) < time.monotonic():
+                ctrl = pid.check(thermo.read())
+                if ctrl > 0:
+                    relay.value = True
+                    led.value = True
+                else:
+                    relay.value = False
+                    led.value = False
+                print(f'ctrl: {pid.ctrl} | n={len(pid.state['T_data'])}')
+                pid.clock = time.monotonic()
+                pid.saveState()
+        except Exception as e:
+            print(f'pid error: {e}')
+            break
+
+
+
+
 #  function to convert celcius to fahrenheit
 #def c_to_f(temp):
 #    temp_f = (temp * 9/5) + 32
@@ -186,46 +229,5 @@ except OSError:
 ping_address = ipaddress.ip_address("8.8.4.4")
 
 
-clock = time.monotonic() #  time.monotonic() holder for server ping
-
-print("starting 30sec loop")
-print()
-
-while True:
-    try:
-        #  every 30 seconds, ping server & update temp reading
-        if (clock + 30) < time.monotonic():
-            if wifi.radio.ping(ping_address) is None:
-                print("lost connection")
-            else:
-                print("connected")
-            clock = time.monotonic()
-            #  comment/uncomment for desired units
-        server.poll()
-    # pylint: disable=broad-except
-    except Exception as e:
-        print(f'server error: {e}')
-        continue
-
-    try:
-        if (pid.clock + pid.state['dt']) < time.monotonic():
-            ctrl = pid.check(thermo.read())
-            if ctrl > 0:
-                relay.value = True
-                led.value = True
-            else:
-                relay.value = False
-                led.value = False
-            print(f'ctrl: {pid.ctrl} | n={len(pid.state['T_data'])}')
-            pid.clock = time.monotonic()
-            pid.saveState()
-    except Exception as e:
-        print(f'pid error: {e}')
-        break
-
-
-
-
-
-
+uThermostat(thermo, relay, pid)
 
