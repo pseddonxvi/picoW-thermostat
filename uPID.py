@@ -71,6 +71,18 @@ class uPID:
 
         return self.ctrl
 
+    def saveState(self):
+        with open("state.json", "w") as f:
+            state = {}
+            state["startTime"] = self.startTime 
+            state["T_data"] = self.T_data 
+            state["T_long"] = self.T_long
+            state["setT"] = self.setT 
+            self.Kp = Kp
+            self.Ki = Ki
+            self.Kd = Kd 
+            self.dt = dt
+
 
 
 
