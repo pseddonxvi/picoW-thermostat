@@ -20,6 +20,7 @@ class uPID:
         self.state["status"] = "None"
         
         self.l_run = False
+        self.initialized = False
 
         self.clock = 0
         self.longClock = 0
@@ -29,8 +30,6 @@ class uPID:
         self.int = 0
         self.dif = 0
         self.ctrl = 0
-        
-        self.initialized = False
 
         self.stateFileName = "state.json"
 
@@ -43,9 +42,9 @@ class uPID:
             self.state["T_data"].append([0,T])
             self.state["T_long"].append([0,T])
             self.state["startTime"] = time.monotonic()
-            self.err = self.getError(T)
-            self.clock = time.monotonic()
-            self.longClock = time.monotonic()
+            # self.err = self.getError(T)
+            # self.clock = time.monotonic()
+            # self.longClock = time.monotonic()
             self.initialized = True
             self.state["status"] = "Initialized"
 
