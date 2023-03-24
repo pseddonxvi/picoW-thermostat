@@ -22,6 +22,9 @@
         <div id="thermostatInputs">
             <input type="button" value="Start" id="thermostatStart">
             <input type="button" value="Restart" id="thermostatRestart">
+            <input type="button" value="Stop" id="thermostatStop">
+            <br>
+            <div id="startResponse"></div>
         </div>
         <div>
             Time: <span id="timeMonitor"></span>
@@ -143,6 +146,12 @@
     thermostatStart.addEventListener("click", function(){
         runThermostat("start");
     })
+    thermostatStart.addEventListener("click", function(){
+        runThermostat("restart");
+    })
+    thermostatStop.addEventListener("click", function(){
+        runThermostat("stop");
+    })
 
     function runThermostat(startType="start"){
         let xR = new XMLHttpRequest();
@@ -151,14 +160,7 @@
                 
                 console.log("Server Response:", this.responseText);
                 data = JSON.parse(this.responseText);
-                if (data['item'] === "currentT"){
-                    currentTData.innerHTML = data['value'];
-                    let n = data['value'].length
-                    TMonitor.innerHTML = data['value'][n-1];
-                }
-                if (data['item'] === "longT"){
-                    longTData.innerHTML = data['value'];
-                }
+                startResponse.innerHTML = data['status']
 
                 //Relay.value = data['value'] ? "ON" : "OFF";
             }
@@ -171,7 +173,7 @@
         xR.send(JSON.stringify(data));
     }
 
-    nCheck = setInterval(getTRecords("current"), 1000);
+    // nCheck = setInterval(getTRecords("current"), 1000);
 
 </script>
 </html>

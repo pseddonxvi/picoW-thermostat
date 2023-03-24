@@ -17,7 +17,7 @@ class uPID:
         self.state["T_long"] = []
         # timestep for long term records (continue recording indefinitely)
         self.state["longDt"] = self.state['nCurrent'] * self.state['dt'] 
-        self.state["status"] = "None"
+        #self.state["status"] = "None"
         
         self.l_run = False
         self.initialized = False
@@ -46,7 +46,7 @@ class uPID:
             # self.clock = time.monotonic()
             # self.longClock = time.monotonic()
             self.initialized = True
-            self.state["status"] = "Initialized"
+            #self.state["status"] = "Initialized"
 
         else: 
             runtime = round(time.monotonic() - self.state["startTime"], 1)
@@ -85,6 +85,18 @@ class uPID:
                 self.state = json.loads(f.read())
         except Exception as e:
             print(f'Error loading state file ({self.stateFileName}): {e}')
+
+    def start(self):
+        self.l_run = True
+
+    def restart(self):
+        self.loadState()
+        self.initialized = True
+
+    def stop(self):
+        self.l_run = False
+
+
 
 
 

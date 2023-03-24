@@ -171,7 +171,16 @@ def startController(request: HTTPRequest):
     print(f"data: {data}")
     rData = {}
     if (data['action'] == "start"):
-        pid.l_run = True
+        pid.start()
+        rData["status"] = "started"
+    elif (data['action'] == "restart"):
+        pid.restart()
+        rData["status"] = "started"
+    elif (data['action'] == "stop"):
+        pid.stop()
+        rData["status"] = "stopped"
+    with HTTPResponse(request) as response:
+        response.send(json.dumps(rData))
         
 
 @server.route("/relay", method=HTTPMethod.POST)
