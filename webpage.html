@@ -27,7 +27,7 @@
             <input type="button" value="Stop" id="thermostatStop">
             <br>
             <div id="startResponse"></div>
-            <div id="TGraph"></div>
+            <canvas id="TGraph"></canvas>
         </div>
 
 
@@ -184,7 +184,7 @@
         xR.send(JSON.stringify(data));
     }
 
-    nCheck = setInterval(getT, 5000);
+    // nCheck = setInterval(getT, 5000);
 
     //updateChart();
 
@@ -213,9 +213,10 @@
         T_data_set = [];
         for (let i=0; i<T_data.length; i++){
             let d = {
-                x: T_data[0], 
-                y: T_data[1]
+                x: T_data[i][0], 
+                y: T_data[i][1]
             };
+            console.log(i, d);
             T_data_set.push(d);
         }
         dataT = {
@@ -224,6 +225,11 @@
                 data: T_data_set
             }]
         }
+
+        
+        console.log("T_data:", T_data);
+        console.log("T_data_set:", T_data_set);
+        console.log("dataT:", dataT);
 
         var chart = new Chart(ctx, {
             type: 'scatter',
@@ -243,8 +249,8 @@
         T_data_set = [];
         for (let i=0; i<T_data.length; i++){
             let d = {
-                x: T_data[0], 
-                y: T_data[1]
+                x: T_data[i][0], 
+                y: T_data[i][1]
             };
             T_data_set.push(d);
         }
