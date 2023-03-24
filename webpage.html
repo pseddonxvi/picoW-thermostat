@@ -52,6 +52,32 @@
     d = document;
 
     const ctx = d.getElementById('TGraph');
+    var dataT = {
+        datasets: [{
+            label: "Temperature (C)",
+            data: []
+        }]
+    }
+    var chart = new Chart(ctx, {
+        type: 'scatter',
+        data: dataT,
+        options: {
+            scales: {
+                x: {
+                    type: 'linear',
+                    position: 'bottom',
+                    min: 0,
+                    max: 100
+                },
+                y: {
+                    type: 'linear',
+                    position: 'bottom',
+                    min: 10,
+                    max: 70
+                }
+            }
+        }
+    });
 
     d.getElementById("data").innerHTML = "Total";
 
@@ -173,7 +199,7 @@
                     //createChart();
                     var chartId = setInterval(createChart, 2000);
                 } else {
-                    if (chartId !== 'undefined'){
+                    if (typeof chartId !== 'undefined'){
                         clearInterval(chartId);
                     }
                 }
@@ -201,12 +227,15 @@
                 //console.log("Server Response:", this.responseText);
                 data = JSON.parse(this.responseText);
                 console.log("T_data:", data['T_data']);
+                console.log("typeof(chart)", typeof chart);
 
-                if (chart === 'undefined') {
-                    drawGraph(data['T_data'], data['T_long']);
-                } else {
-                    updateGraph(data['T_data'], data['T_long']);
-                }
+                updateGraph(data['T_data'], data['T_long']);
+
+                // if (typeof chart === 'undefined') {
+                //     drawGraph(data['T_data'], data['T_long']);
+                // } else {
+                //     updateGraph(data['T_data'], data['T_long']);
+                // }
                 
 
             }
@@ -227,20 +256,22 @@
                 x: T_data[i][0], 
                 y: T_data[i][1]
             };
-            console.log(i, d);
+            // console.log(i, d);
             T_data_set.push(d);
         }
         dataT = {
             datasets: [{
                 label: "Temperature (C)",
-                data: T_data_set
+                data: T_data_set,
+                min: 0,
+                max: 100
             }]
         }
 
         
-        console.log("T_data:", T_data);
-        console.log("T_data_set:", T_data_set);
-        console.log("dataT:", dataT);
+        // console.log("T_data:", T_data);
+        // console.log("T_data_set:", T_data_set);
+        // console.log("dataT:", dataT);
 
         var chart = new Chart(ctx, {
             type: 'scatter',
