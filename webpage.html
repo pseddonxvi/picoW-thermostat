@@ -27,7 +27,7 @@
             <input type="button" value="Stop" id="thermostatStop">
             <br>
             <div id="startResponse"></div>
-            <canvas id="TGraph"></canvas>
+            <div id="TGraph"></div>
         </div>
 
 
@@ -51,7 +51,7 @@
 <script>
     d = document;
 
-    ctx = d.getElementById('TGraph');
+    const ctx = d.getElementById('TGraph');
 
     d.getElementById("data").innerHTML = "Total";
 
@@ -170,7 +170,7 @@
                 startResponse.innerHTML = data['status'];
 
                 if (data['status'] === 'started'){
-                    updateChart();
+                    createChart();
                 }
 
                 //Relay.value = data['value'] ? "ON" : "OFF";
@@ -188,7 +188,7 @@
 
     //updateChart();
 
-    function updateChart(){
+    function createChart(){
         let xR = new XMLHttpRequest();
         xR.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
@@ -215,7 +215,8 @@
             let d = {
                 x: T_data[0], 
                 y: T_data[1]
-            }
+            };
+            T_data_set.push(d);
         }
         dataT = {
             datasets: [{
@@ -224,7 +225,7 @@
             }]
         }
 
-        new Chart(ctx, {
+        var chart = new Chart(ctx, {
             type: 'scatter',
             data: dataT,
             options: {
@@ -236,6 +237,18 @@
                 }
             }
         });
+    }
+
+    function updateChart(T_data, T_long){
+        T_data_set = [];
+        for (let i=0; i<T_data.length; i++){
+            let d = {
+                x: T_data[0], 
+                y: T_data[1]
+            };
+            T_data_set.push(d);
+        }
+        chart.data.datasets[0] = T_data_set;
     }
 
 </script>
