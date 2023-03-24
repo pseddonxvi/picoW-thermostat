@@ -218,6 +218,7 @@ while True:
                 led.value = False
             print(f'ctrl: {pid.ctrl} | n={len(pid.state['T_data'])}')
             pid.clock = time.monotonic()
+            pid.saveState()
     except Exception as e:
         print(f'pid error: {e}')
         break
