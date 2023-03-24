@@ -13,10 +13,10 @@ class uPID:
         self.int = 0
         self.dif = 0
         self.ctrl = 0
-
+        
+        self.T_data = [] #temperature
         self.clock = 0
-        self.T = []
-        self.longT = []
+        self.T_long = []
         self.longClock = 0
         # number of current data points to keep
         self.nCurrent = 300 
@@ -33,14 +33,24 @@ class uPID:
         return self.setT - T
 
     def check(self, T):
-        if self.initialized:
-            self.T.append(T)
-            if len(self.T) > self.nCurrent:
-                self.T.pop(0)
-            if (self.longClock + self.longDt) < time.monotonic():
-                self.longT.append(self.T[0])
-                print("record long:")
-                self.longClock = time.monotonic()
+        if (not self.initialized): # initialize 
+            self.T_data.append([0,T])
+            self.err = self.getError(T)
+            self.startTime = time.monotonic()
+            self.clock = time.monotonic()
+            self.longClock = time.monotonic()
+            self.T_long.append((0,T))
+            self.initialized = True
+
+        else: 
+            runtime = round(time.monotonic() - self.startTime, 1)
+            self.T_data.append((runtime, T))
+            if len(self.T_data) > self.nCurrent:
+                oldT = self.T_data.pop(0)
+                if (self.longClock + self.longDt) < time.monotonic():
+                    self.T_long.append(oldT)
+                    print("record long:")
+                    self.longClock = time.monotonic()
 
             print("calculating pid")
             #error
@@ -50,20 +60,14 @@ class uPID:
             #integral
             self.int += self.Ki * self.err
             #differential
-            self.dTdt = (self.T[-1] - self.T[-2])/self.dt
+            self.dTdt = (self.T_data[-1][1] - self.T_data[-2][1])/self.dt
             self.dif = self.Kd * self.dTdt 
 
             self.ctrl = self.prp + self.int + self.dif
 
             print(f'T={T} | e={self.err} | P={self.prp} | I={self.int} | dT/dt={self.dTdt} | D={self.dif} | C={self.ctrl}')
             
-        else: # initialize 
-            self.T.append(T)
-            self.err = self.getError(T)
-            self.startTime = time.monotonic()
-            self.clock = time.monotonic()
-            self.longClock = time.monotonic()
-            self.initialized = True
+
 
         return self.ctrl
 

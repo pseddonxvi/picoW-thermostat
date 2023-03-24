@@ -20,6 +20,10 @@
     <div>
         Sous:<br>
         <div>
+            Time: <span id="timeMonitor"></span>
+            Temperature: <span id="TMonitor"></span>
+        </div>
+        <div>
             <input type="button" id="currentT" value="Current Temperature Record"><br>
             <span id="currentTData"></span>
         </div>
@@ -77,6 +81,7 @@
         xR.send(JSON.stringify(data));
     }
 
+
     relayButton = d.getElementById("Relay");
     relayButton.addEventListener("click", relaySwitch);
 
@@ -112,6 +117,8 @@
                 data = JSON.parse(this.responseText);
                 if (data['item'] === "currentT"){
                     currentTData.innerHTML = data['value'];
+                    let n = data['value'].length
+                    TMonitor.innerHTML = data['value'][n-1];
                 }
                 if (data['item'] === "longT"){
                     longTData.innerHTML = data['value'];
@@ -124,8 +131,12 @@
         data["action"] = "getTRecords";
         data["timeFrame"] = timeFrame;
         xR.open("POST", "getT", true);
+        xR.setRequestHeader("Cache-Control", "no-cache, no-store, max-age=0")
+        console.log("Sending request for Temperature data.")
         xR.send(JSON.stringify(data));
     }
+
+    nCheck = setInterval(getTRecords("current"), 1000);
 
 </script>
 </html>

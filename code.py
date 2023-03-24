@@ -44,7 +44,7 @@ relay.value = False
 
 # set up PID
 dt = 2
-pid = uPID(setT=20, dt=dt, Kp=10.0, Ki=0.0, Kd=-100)
+pid = uPID(setT=56, dt=dt, Kp=10.0, Ki=0.0, Kd=-100)
 # test = pid.check(thermo.read())
 # time.sleep(1)
 # test = pid.check(thermo.read())
@@ -136,10 +136,10 @@ def getTemperatureRecords(request: HTTPRequest):
     rData = {}
     if (data['timeFrame'] == "current"):
         rData["item"] = "currentT"
-        rData['value'] = pid.T
+        rData['value'] = pid.T_data
     elif (data['timeFrame'] == 'long'):
         rData["item"] = "longT"
-        rData['value'] = pid.longT
+        rData['value'] = pid.T_long
     with HTTPResponse(request) as response:
         response.send(json.dumps(rData))
 
@@ -212,13 +212,16 @@ while True:
             ctrl = pid.check(thermo.read())
             if ctrl > 0:
                 relay.value = True
+                led.value = True
             else:
                 relay.value = False
-            print(f'ctrl: {pid.ctrl} | n={len(pid.T)}')
+                led.value = False
+            print(f'ctrl: {pid.ctrl} | n={len(pid.T_data)}')
             pid.clock = time.monotonic()
     except Exception as e:
         print(f'pid error: {e}')
         break
+
 
 
 
