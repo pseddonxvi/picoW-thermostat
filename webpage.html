@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PicoW Test Server</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     Pico W here.
@@ -18,6 +19,7 @@
     Relay: <input type="button" id="Relay" value="Switch">
 
     <div>
+
         <h3>Sous</h3>
         <div id="thermostatInputs">
             <input type="button" value="Start" id="thermostatStart">
@@ -25,7 +27,10 @@
             <input type="button" value="Stop" id="thermostatStop">
             <br>
             <div id="startResponse"></div>
+            <div id="TGraph"></div>
         </div>
+
+
         <div>
             Time: <span id="timeMonitor"></span>
             Temperature: <span id="TMonitor"></span>
@@ -45,6 +50,8 @@
 </body>
 <script>
     d = document;
+
+    const ctx = d.getElementById('TGraph');
 
     d.getElementById("data").innerHTML = "Total";
 
@@ -173,7 +180,59 @@
         xR.send(JSON.stringify(data));
     }
 
-    nCheck = setInterval(getT, 1000);
+    nCheck = setInterval(getT, 5000);
+
+    updateChart();
+
+    function updateChart(){
+        let xR = new XMLHttpRequest();
+        xR.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                
+                //console.log("Server Response:", this.responseText);
+                data = JSON.parse(this.responseText);
+                console.log("T_data:", data['T_data']);
+
+                drawGraph(data['T_data'], data['T_long'])
+            }
+        }
+        let data = {};
+        data["action"] = "getAll";
+        xR.open("POST", "getChartData", true);
+        xR.setRequestHeader("Cache-Control", "no-cache, no-store, max-age=0")
+        console.log("Sending request for Temperature data.")
+        xR.send(JSON.stringify(data));
+    }
+
+    function drawGraph(T_data, T_long){
+
+        T_data_set = [];
+        for (let i=0; i<T_data.length; i++){
+            let d = {
+                x: T_data[0], 
+                y: T_data[1]
+            }
+        }
+        dataT = {
+            datasets: [{
+                label: "Temperature (C)",
+                data: T_data_set
+            }]
+        }
+
+        new Chart(ctx, {
+            type: 'scatter',
+            data: dataT,
+            options: {
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    }
 
 </script>
 </html>

@@ -165,6 +165,16 @@ def getTemperatureRecords(request: HTTPRequest):
     with HTTPResponse(request) as response:
         response.send(json.dumps(rData))
 
+@server.route("/getChartData", method=HTTPMethod.POST)
+def getTemperatureRecords(request: HTTPRequest):
+    data = requestToArray(request)
+    print(f"data: {data}")
+    rData = {}
+    rData['T_data'] = pid.state['T_data']
+    rData['T_long'] = pid.state['T_long']
+    with HTTPResponse(request) as response:
+        response.send(json.dumps(rData))
+
 @server.route("/start", method=HTTPMethod.POST)
 def startController(request: HTTPRequest):
     data = requestToArray(request)
