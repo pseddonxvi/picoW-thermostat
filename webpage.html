@@ -170,7 +170,12 @@
                 startResponse.innerHTML = data['status'];
 
                 if (data['status'] === 'started'){
-                    createChart();
+                    //createChart();
+                    var chartId = setInterval(createChart, 2000);
+                } else {
+                    if (chartId !== 'undefined'){
+                        clearInterval(chartId);
+                    }
                 }
 
                 //Relay.value = data['value'] ? "ON" : "OFF";
@@ -197,7 +202,13 @@
                 data = JSON.parse(this.responseText);
                 console.log("T_data:", data['T_data']);
 
-                drawGraph(data['T_data'], data['T_long'])
+                if (chart === 'undefined') {
+                    drawGraph(data['T_data'], data['T_long']);
+                } else {
+                    updateGraph(data['T_data'], data['T_long']);
+                }
+                
+
             }
         }
         let data = {};
@@ -245,7 +256,7 @@
         });
     }
 
-    function updateChart(T_data, T_long){
+    function updateGraph(T_data, T_long){
         T_data_set = [];
         for (let i=0; i<T_data.length; i++){
             let d = {
