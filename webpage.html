@@ -146,7 +146,7 @@
     thermostatStart.addEventListener("click", function(){
         runThermostat("start");
     })
-    thermostatStart.addEventListener("click", function(){
+    thermostatRestart.addEventListener("click", function(){
         runThermostat("restart");
     })
     thermostatStop.addEventListener("click", function(){
@@ -173,7 +173,8 @@
         xR.send(JSON.stringify(data));
     }
 
-    // nCheck = setInterval(getTRecords("current"), 1000);
+    nCheck = setInterval(getT, 1000);
 
 </script>
 </html>
+

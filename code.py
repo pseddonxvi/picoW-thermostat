@@ -179,6 +179,8 @@ def startController(request: HTTPRequest):
     elif (data['action'] == "stop"):
         pid.stop()
         rData["status"] = "stopped"
+    else:
+        rData["status"] = f"Recieved: {data['action']}"
     with HTTPResponse(request) as response:
         response.send(json.dumps(rData))
         
@@ -253,3 +255,4 @@ while True:
         uThermoController(thermo, relay, pid)
 
     
+

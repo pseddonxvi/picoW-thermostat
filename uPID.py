@@ -91,10 +91,12 @@ class uPID:
 
     def restart(self):
         self.loadState()
+        self.l_run = True
         self.initialized = True
 
     def stop(self):
         self.l_run = False
+
 
 
 
