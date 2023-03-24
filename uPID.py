@@ -71,17 +71,20 @@ class uPID:
 
         return self.ctrl
 
+    stateFileName = "state.json"
+    stateVariables = ["startTime", 
+                      "T_data",
+                      "T_long",
+                      "setT",
+                      "Kp", "Ki", "Kd",
+                      "dt"]
+
     def saveState(self):
-        with open("state.json", "w") as f:
-            state = {}
-            state["startTime"] = self.startTime 
-            state["T_data"] = self.T_data 
-            state["T_long"] = self.T_long
-            state["setT"] = self.setT 
-            self.Kp = Kp
-            self.Ki = Ki
-            self.Kd = Kd 
-            self.dt = dt
+        state = {}
+        for v in self.stateVariables:
+            state[v] = eval(f"self.{v}")
+        with open(stateFileName, "w") as f:
+            f.write(json.dumps(state))
 
 
 

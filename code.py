@@ -9,7 +9,7 @@ import busio
 import board
 import microcontroller
 import json
-from uPID import uPID
+from uPID2 import uPID
 
 
 from digitalio import DigitalInOut, Direction
