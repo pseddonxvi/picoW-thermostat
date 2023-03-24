@@ -27,7 +27,7 @@
             <input type="button" value="Stop" id="thermostatStop">
             <br>
             <div id="startResponse"></div>
-            <div id="TGraph"></div>
+            <canvas id="TGraph"></canvas>
         </div>
 
 
@@ -51,7 +51,7 @@
 <script>
     d = document;
 
-    const ctx = d.getElementById('TGraph');
+    ctx = d.getElementById('TGraph');
 
     d.getElementById("data").innerHTML = "Total";
 
