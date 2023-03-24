@@ -18,7 +18,11 @@
     Relay: <input type="button" id="Relay" value="Switch">
 
     <div>
-        Sous:<br>
+        <h3>Sous</h3>
+        <div id="thermostatInputs">
+            <input type="button" value="Start" id="thermostatStart">
+            <input type="button" value="Restart" id="thermostatRestart">
+        </div>
         <div>
             Time: <span id="timeMonitor"></span>
             Temperature: <span id="TMonitor"></span>
@@ -133,6 +137,37 @@
         xR.open("POST", "getT", true);
         xR.setRequestHeader("Cache-Control", "no-cache, no-store, max-age=0")
         console.log("Sending request for Temperature data.")
+        xR.send(JSON.stringify(data));
+    }
+
+    thermostatStart.addEventListener("click", function(){
+        runThermostat("start");
+    })
+
+    function runThermostat(startType="start"){
+        let xR = new XMLHttpRequest();
+        xR.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                
+                console.log("Server Response:", this.responseText);
+                data = JSON.parse(this.responseText);
+                if (data['item'] === "currentT"){
+                    currentTData.innerHTML = data['value'];
+                    let n = data['value'].length
+                    TMonitor.innerHTML = data['value'][n-1];
+                }
+                if (data['item'] === "longT"){
+                    longTData.innerHTML = data['value'];
+                }
+
+                //Relay.value = data['value'] ? "ON" : "OFF";
+            }
+        }
+        let data = {};
+        data["action"] = startType;
+        xR.open("POST", "start", true);
+        xR.setRequestHeader("Cache-Control", "no-cache, no-store, max-age=0")
+        console.log(`${startType}ing thermostat controller`)
         xR.send(JSON.stringify(data));
     }
 
