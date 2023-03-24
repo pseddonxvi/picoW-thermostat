@@ -51,8 +51,6 @@ pid = uPID(setT=56, dt=dt, Kp=10.0, Ki=0.0, Kd=-100)
 # print(f'test: {test}')
 
 
-l_run = False
-
 def uThermoController(thermo, relay, pid):
 
     try:
@@ -69,7 +67,7 @@ def uThermoController(thermo, relay, pid):
             pid.saveState()
     except Exception as e:
         print(f'pid error: {e}')
-        break
+
 
 
 
@@ -173,7 +171,7 @@ def startController(request: HTTPRequest):
     print(f"data: {data}")
     rData = {}
     if (data['action'] == "start"):
-        l_run = True
+        pid.l_run = True
         
 
 @server.route("/relay", method=HTTPMethod.POST)
@@ -236,10 +234,13 @@ while True:
             clock = time.monotonic()
             #  comment/uncomment for desired units
         server.poll()
+        
     # pylint: disable=broad-except
     except Exception as e:
         print(f'server error: {e}')
         continue
-
-    if l_run:
+    
+    if pid.l_run:
         uThermoController(thermo, relay, pid)
+
+    

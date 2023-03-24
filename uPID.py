@@ -18,6 +18,8 @@ class uPID:
         # timestep for long term records (continue recording indefinitely)
         self.state["longDt"] = self.state['nCurrent'] * self.state['dt'] 
         self.state["status"] = "None"
+        
+        self.l_run = False
 
         self.clock = 0
         self.longClock = 0
@@ -84,6 +86,7 @@ class uPID:
                 self.state = json.loads(f.read())
         except Exception as e:
             print(f'Error loading state file ({self.stateFileName}): {e}')
+
 
 
 
