@@ -167,7 +167,11 @@
                 
                 console.log("Server Response:", this.responseText);
                 data = JSON.parse(this.responseText);
-                startResponse.innerHTML = data['status']
+                startResponse.innerHTML = data['status'];
+
+                if (data['status'] === 'started'){
+                    updateChart();
+                }
 
                 //Relay.value = data['value'] ? "ON" : "OFF";
             }
@@ -182,7 +186,7 @@
 
     nCheck = setInterval(getT, 5000);
 
-    updateChart();
+    //updateChart();
 
     function updateChart(){
         let xR = new XMLHttpRequest();
