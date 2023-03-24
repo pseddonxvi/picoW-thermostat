@@ -16,7 +16,7 @@ class uPID:
         self.state["nCurrent"] = 300 
         self.state["T_long"] = []
         # timestep for long term records (continue recording indefinitely)
-        self.state["longDt"] = self.nCurrent * self.dt 
+        self.state["longDt"] = self.state['nCurrent'] * self.state['dt'] 
         self.state["status"] = "None"
 
         self.clock = 0
@@ -61,12 +61,12 @@ class uPID:
             #error
             self.err = self.getError(T) 
             #proportional
-            self.prp = self.Kp * self.err
+            self.prp = self.state['Kp'] * self.err
             #integral
-            self.int += self.Ki * self.err
+            self.int += self.state['Ki'] * self.err
             #differential
-            self.dTdt = (self.T_data[-1][1] - self.T_data[-2][1])/self.dt
-            self.dif = self.Kd * self.dTdt 
+            self.dTdt = (self.state['T_data'][-1][1] - self.state['T_data'][-2][1])/self.state['dt']
+            self.dif = self.state['Kd'] * self.dTdt 
 
             self.ctrl = self.prp + self.int + self.dif
 

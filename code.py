@@ -136,10 +136,10 @@ def getTemperatureRecords(request: HTTPRequest):
     rData = {}
     if (data['timeFrame'] == "current"):
         rData["item"] = "currentT"
-        rData['value'] = pid.T_data
+        rData['value'] = pid.state['T_data']
     elif (data['timeFrame'] == 'long'):
         rData["item"] = "longT"
-        rData['value'] = pid.T_long
+        rData['value'] = pid.state['T_long']
     with HTTPResponse(request) as response:
         response.send(json.dumps(rData))
 
@@ -208,7 +208,7 @@ while True:
         continue
 
     try:
-        if (pid.clock + pid.dt) < time.monotonic():
+        if (pid.clock + pid.state['dt']) < time.monotonic():
             ctrl = pid.check(thermo.read())
             if ctrl > 0:
                 relay.value = True
@@ -216,7 +216,7 @@ while True:
             else:
                 relay.value = False
                 led.value = False
-            print(f'ctrl: {pid.ctrl} | n={len(pid.T_data)}')
+            print(f'ctrl: {pid.ctrl} | n={len(pid.state['T_data'])}')
             pid.clock = time.monotonic()
     except Exception as e:
         print(f'pid error: {e}')
