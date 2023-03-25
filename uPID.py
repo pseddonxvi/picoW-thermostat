@@ -2,7 +2,7 @@ import time
 import json
 
 class uPID:
-    def __init__(self, setT, dt=1.0, Kp=1.0, Ki=0, Kd=100):
+    def __init__(self, setT, dt=10.0, Kp=1.0, Ki=0, Kd=100):
         self.state = {}
         self.state["setT"] = setT
         self.state["Kp"] = Kp
@@ -13,7 +13,7 @@ class uPID:
         self.state["startTime"] = -1
         self.state["T_data"] = []
         # number of current data points to keep
-        self.state["nCurrent"] = 300 
+        self.state["nCurrent"] = 30 
         self.state["T_long"] = []
         # timestep for long term records (continue recording indefinitely)
         self.state["longDt"] = self.state['nCurrent'] * self.state['dt'] 

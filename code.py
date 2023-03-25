@@ -43,7 +43,7 @@ relay.direction = Direction.OUTPUT
 relay.value = False
 
 # set up PID
-dt = 2
+dt = 10.
 pid = uPID(setT=56, dt=dt, Kp=10.0, Ki=0.0, Kd=-100)
 # test = pid.check(thermo.read())
 # time.sleep(1)

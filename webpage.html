@@ -66,14 +66,14 @@
                 x: {
                     type: 'linear',
                     position: 'bottom',
-                    min: 0,
-                    max: 100
+                    // min: 0,
+                    // max: 100
                 },
                 y: {
                     type: 'linear',
                     position: 'bottom',
-                    min: 10,
-                    max: 70
+                    // min: 10,
+                    // max: 70
                 }
             }
         }
@@ -226,8 +226,8 @@
                 
                 //console.log("Server Response:", this.responseText);
                 data = JSON.parse(this.responseText);
-                console.log("T_data:", data['T_data']);
-                console.log("typeof(chart)", typeof chart);
+                // console.log("T_data:", data['T_data']);
+                // console.log("typeof(chart)", typeof chart);
 
                 updateGraph(data['T_data'], data['T_long']);
 
@@ -248,44 +248,44 @@
         xR.send(JSON.stringify(data));
     }
 
-    function drawGraph(T_data, T_long){
+    // function drawGraph(T_data, T_long){
 
-        T_data_set = [];
-        for (let i=0; i<T_data.length; i++){
-            let d = {
-                x: T_data[i][0], 
-                y: T_data[i][1]
-            };
-            // console.log(i, d);
-            T_data_set.push(d);
-        }
-        dataT = {
-            datasets: [{
-                label: "Temperature (C)",
-                data: T_data_set,
-                min: 0,
-                max: 100
-            }]
-        }
+    //     T_data_set = [];
+    //     for (let i=0; i<T_data.length; i++){
+    //         let d = {
+    //             x: T_data[i][0], 
+    //             y: T_data[i][1]
+    //         };
+    //         // console.log(i, d);
+    //         T_data_set.push(d);
+    //     }
+    //     dataT = {
+    //         datasets: [{
+    //             label: "Temperature (C)",
+    //             data: T_data_set,
+    //             min: 0,
+    //             max: 100
+    //         }]
+    //     }
 
         
-        // console.log("T_data:", T_data);
-        // console.log("T_data_set:", T_data_set);
-        // console.log("dataT:", dataT);
+    //     // console.log("T_data:", T_data);
+    //     // console.log("T_data_set:", T_data_set);
+    //     // console.log("dataT:", dataT);
 
-        var chart = new Chart(ctx, {
-            type: 'scatter',
-            data: dataT,
-            options: {
-                scales: {
-                    x: {
-                        type: 'linear',
-                        position: 'bottom'
-                    }
-                }
-            }
-        });
-    }
+    //     var chart = new Chart(ctx, {
+    //         type: 'scatter',
+    //         data: dataT,
+    //         options: {
+    //             scales: {
+    //                 x: {
+    //                     type: 'linear',
+    //                     position: 'bottom'
+    //                 }
+    //             }
+    //         }
+    //     });
+    // }
 
     function updateGraph(T_data, T_long){
         T_data_set = [];
@@ -296,7 +296,8 @@
             };
             T_data_set.push(d);
         }
-        chart.data.datasets[0] = T_data_set;
+        console.log('T_data_set:', T_data_set);
+        chart.data.datasets[0]['data'] = T_data_set;
         chart.update();
     }
 
