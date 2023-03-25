@@ -48,14 +48,22 @@
     </div>
     
 </body>
+<!-- <style>
+    div {
+        color: #006eb8;
+        background-color: #9bd0f5;
+    }
+</style> -->
 <script>
     d = document;
 
     const ctx = d.getElementById('TGraph');
     var dataT = {
         datasets: [{
-            label: "Temperature (C)",
-            data: []
+            label: "Temperature (°C)",
+            data: [],
+            borderColor: '#006eb8',
+            backgroundColor: '#9BD0F5',
         }]
     }
     var chart = new Chart(ctx, {
@@ -66,12 +74,13 @@
                 x: {
                     type: 'linear',
                     position: 'bottom',
+                    text: "time (sec)"
                     // min: 0,
                     // max: 100
                 },
                 y: {
                     type: 'linear',
-                    position: 'bottom',
+                    position: 'left',
                     // min: 10,
                     // max: 70
                 }
@@ -248,56 +257,39 @@
         xR.send(JSON.stringify(data));
     }
 
-    // function drawGraph(T_data, T_long){
-
-    //     T_data_set = [];
-    //     for (let i=0; i<T_data.length; i++){
-    //         let d = {
-    //             x: T_data[i][0], 
-    //             y: T_data[i][1]
-    //         };
-    //         // console.log(i, d);
-    //         T_data_set.push(d);
-    //     }
-    //     dataT = {
-    //         datasets: [{
-    //             label: "Temperature (C)",
-    //             data: T_data_set,
-    //             min: 0,
-    //             max: 100
-    //         }]
-    //     }
-
-        
-    //     // console.log("T_data:", T_data);
-    //     // console.log("T_data_set:", T_data_set);
-    //     // console.log("dataT:", dataT);
-
-    //     var chart = new Chart(ctx, {
-    //         type: 'scatter',
-    //         data: dataT,
-    //         options: {
-    //             scales: {
-    //                 x: {
-    //                     type: 'linear',
-    //                     position: 'bottom'
-    //                 }
-    //             }
-    //         }
-    //     });
-    // }
-
     function updateGraph(T_data, T_long){
         T_data_set = [];
+
+        let runTime = T_data[T_data.length-1][0];
+
+        if (runTime > 60*60){
+            divisor = 60*60; 
+            tUnit="hrs";
+        } else if (runtime > 60) {
+            divisor = 60; 
+            tUnit="min";
+        } else {
+            divisor = 1; 
+            tUnit="sec";
+        }
+
         for (let i=0; i<T_data.length; i++){
             let d = {
-                x: T_data[i][0], 
+                x: T_data[i][0]/divisor, 
                 y: T_data[i][1]
+            };
+            T_data_set.push(d);
+        }
+        for (let i=0; i<T_long.length; i++){
+            let d = {
+                x: T_long[i][0]/divisor, 
+                y: T_long[i][1]
             };
             T_data_set.push(d);
         }
         console.log('T_data_set:', T_data_set);
         chart.data.datasets[0]['data'] = T_data_set;
+        chart.options.scales.x.text = `time (${tUnit})`;
         chart.update();
     }
 
