@@ -206,7 +206,7 @@
 
                 if (data['status'] === 'started'){
                     //createChart();
-                    var chartId = setInterval(createChart, 2000);
+                    var chartId = setInterval(createChart, 5000);
                 } else {
                     if (typeof chartId !== 'undefined'){
                         clearInterval(chartId);
@@ -265,7 +265,7 @@
         if (runTime > 60*60){
             divisor = 60*60; 
             tUnit="hrs";
-        } else if (runtime > 60) {
+        } else if (runTime > 60) {
             divisor = 60; 
             tUnit="min";
         } else {
