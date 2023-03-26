@@ -44,7 +44,7 @@ relay.value = False
 
 # set up PID
 dt = 10.
-pid = uPID(setT=56, dt=dt, Kp=10.0, Ki=0.0, Kd=-100)
+#pid = uPID(setT=56, dt=dt, Kp=10.0, Ki=0.0, Kd=-100)
 # test = pid.check(thermo.read())
 # time.sleep(1)
 # test = pid.check(thermo.read())
@@ -175,12 +175,15 @@ def getTemperatureRecords(request: HTTPRequest):
     with HTTPResponse(request) as response:
         response.send(json.dumps(rData))
 
-@server.route("/start", method=HTTPMethod.POST)
+@server.route("/startCtrl", method=HTTPMethod.POST)
 def startController(request: HTTPRequest):
     data = requestToArray(request)
     print(f"data: {data}")
     rData = {}
     if (data['action'] == "start"):
+        pid = uPID(setT=56, dt=dt, Kp=10.0, Ki=0.0, Kd=-100)
+        # set state from webpage
+        pid.state = pid.state | data['state']
         pid.start()
         rData["status"] = "started"
     elif (data['action'] == "restart"):
@@ -191,6 +194,7 @@ def startController(request: HTTPRequest):
         rData["status"] = "stopped"
     else:
         rData["status"] = f"Recieved: {data['action']}"
+    rData["state"] = pid.state
     with HTTPResponse(request) as response:
         response.send(json.dumps(rData))
         
