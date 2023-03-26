@@ -120,6 +120,7 @@
             }
         }
     });
+    var chartId = 0;
 
     d.getElementById("data").innerHTML = "Total";
 
@@ -239,7 +240,7 @@
 
                 if (data['status'] === 'started'){
                     //createChart();
-                    var chartId = setInterval(createChart, 5000);
+                    chartId = setInterval(createChart, 5000);
                 } else {
                     if (typeof chartId !== 'undefined'){
                         clearInterval(chartId);

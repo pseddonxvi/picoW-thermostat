@@ -31,6 +31,7 @@ class uPID:
         self.int = 0
         self.dif = 0
         self.ctrl = 0
+        self.dTdt = 0
         self.storeParams()
 
         self.stateFileName = "state.json"
@@ -48,7 +49,7 @@ class uPID:
 
         else: 
             self.state['runtime'] = round(time.monotonic() - self.state["startTime"], 1)
-            self.state["T_data"].append((self.saveState['runtime'], T))
+            self.state["T_data"].append((self.state['runtime'], T))
             if len(self.state["T_data"]) > self.state["nCurrent"]:
                 oldT = self.state["T_data"].pop(0)
                 if (self.longClock + self.state["longDt"]) < time.monotonic():

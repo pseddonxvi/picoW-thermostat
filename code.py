@@ -8,6 +8,8 @@ import socketpool
 import busio
 import board
 import microcontroller
+
+import traceback
 import json
 from uPID import uPID
 
@@ -65,8 +67,8 @@ def uThermoController(thermo, relay, pid):
             print(f'ctrl: {pid.ctrl} | n={len(pid.state['T_data'])}')
             pid.clock = time.monotonic()
             pid.saveState()
-    except Exception as e:
-        print(f'pid error: {e}')
+    except Exception:
+        traceback.print_exception()
 
 
 
@@ -168,7 +170,7 @@ def getTemperatureRecords(request: HTTPRequest):
 @server.route("/getChartData", method=HTTPMethod.POST)
 def getTemperatureRecords(request: HTTPRequest):
     data = requestToArray(request)
-    print(f"data: {data}")
+    print(f"data /getChartData: {data}")
     rData = {}
     rData['state'] = pid.state
     rData['params'] = pid.params
@@ -269,4 +271,5 @@ while True:
         uThermoController(thermo, relay, pid)
 
     
+
 
