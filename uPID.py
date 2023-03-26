@@ -18,6 +18,7 @@ class uPID:
         # timestep for long term records (continue recording indefinitely)
         self.state["longDt"] = self.state['nCurrent'] * self.state['dt'] 
         #self.state["status"] = "None"
+        self.state["runtime"] = 0.
         
         self.l_run = False
         self.initialized = False
@@ -30,6 +31,7 @@ class uPID:
         self.int = 0
         self.dif = 0
         self.ctrl = 0
+        self.storeParams()
 
         self.stateFileName = "state.json"
 
@@ -42,15 +44,11 @@ class uPID:
             self.state["T_data"].append([0,T])
             self.state["T_long"].append([0,T])
             self.state["startTime"] = time.monotonic()
-            # self.err = self.getError(T)
-            # self.clock = time.monotonic()
-            # self.longClock = time.monotonic()
             self.initialized = True
-            #self.state["status"] = "Initialized"
 
         else: 
-            runtime = round(time.monotonic() - self.state["startTime"], 1)
-            self.state["T_data"].append((runtime, T))
+            self.state['runtime'] = round(time.monotonic() - self.state["startTime"], 1)
+            self.state["T_data"].append((self.saveState['runtime'], T))
             if len(self.state["T_data"]) > self.state["nCurrent"]:
                 oldT = self.state["T_data"].pop(0)
                 if (self.longClock + self.state["longDt"]) < time.monotonic():
@@ -71,6 +69,7 @@ class uPID:
 
             self.ctrl = self.prp + self.int + self.dif
 
+            self.storeParams()
             print(f'T={T} | e={self.err} | P={self.prp} | I={self.int} | dT/dt={self.dTdt} | D={self.dif} | C={self.ctrl}')
             
         return self.ctrl
@@ -96,6 +95,16 @@ class uPID:
 
     def stop(self):
         self.l_run = False
+
+    def storeParams(self):
+        p = {}
+        p["Error"] = self.err
+        p["Prop"] = self.prp
+        p["Int"] = self.int 
+        p["dTdt"] = self.dTdt
+        p["Dif"] = self.dif
+        p["Control"] = self.ctrl
+        self.params = p
 
 
 

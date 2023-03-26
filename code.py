@@ -170,9 +170,8 @@ def getTemperatureRecords(request: HTTPRequest):
     data = requestToArray(request)
     print(f"data: {data}")
     rData = {}
-    # rData['T_data'] = pid.state['T_data']
-    # rData['T_long'] = pid.state['T_long']
     rData['state'] = pid.state
+    rData['params'] = pid.params
     with HTTPResponse(request) as response:
         response.send(json.dumps(rData))
 

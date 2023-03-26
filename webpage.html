@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PicoW Test Server</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        input[type=number] {
+            width: 5em;
+        }
+        .params {
+            width: 5em;
+            border: 1px solid black;
+        }
+    </style>
 </head>
 <body>
     Pico W here.
@@ -25,6 +34,14 @@
             PID: Kp=<input type="number" id="pid_Kp" value="10"> | 
             Ki=<input type="number" name="" id="pid_Ki" value="0"> | 
             Kd=<input type="number" name="" id="pid_Kd" value="-100">
+        </div>
+        <div id="parameters">
+            e: <span class="params" id="Error"></span> | 
+            <span class="params" id="dTdt"></span> |
+            <span class="params" id="Prop"></span> |
+            <span class="params" id="Int"></span> |
+            <span class="params" id="Dif"></span> |
+            <span class="params" id="Control"></span> |
         </div>
         <div id="thermostatInputs">
             <input type="button" value="Start" id="thermostatStart">
@@ -260,15 +277,8 @@
                 // console.log("T_data:", data['T_data']);
                 // console.log("typeof(chart)", typeof chart);
 
-                // updateGraph(data['T_data'], data['T_long']);
+                updateParams(data['params']);
                 updateGraph(data['state']);
-
-                // if (typeof chart === 'undefined') {
-                //     drawGraph(data['T_data'], data['T_long']);
-                // } else {
-                //     updateGraph(data['T_data'], data['T_long']);
-                // }
-                
 
             }
         }
@@ -278,6 +288,13 @@
         xR.setRequestHeader("Cache-Control", "no-cache, no-store, max-age=0")
         console.log("Sending request for Temperature data.")
         xR.send(JSON.stringify(data));
+    }
+
+    function updateParams(params){
+        for (const [key, value] of Object.entries(params)) {
+            // console.log(`${key}: ${value}`);
+            d.getElementById(key).innerHTML = value;
+        }
     }
 
     function updateGraph(state){
