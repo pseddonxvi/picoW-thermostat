@@ -2,7 +2,7 @@ import time
 import json
 
 class uPID:
-    def __init__(self, setT, dt=10.0, Kp=1.0, Ki=0, Kd=100):
+    def __init__(self, setT=57.0, dt=10.0, Kp=1.0, Ki=0, Kd=100):
         self.state = {}
         self.state["setT"] = setT
         self.state["Kp"] = Kp

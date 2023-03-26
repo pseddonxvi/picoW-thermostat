@@ -232,11 +232,11 @@
         }
         let data = {};
         data["state"] = {};
-        data["state"]["setT"] = setTemp.value;
-        data["state"]["dt"] = dt.value;
-        data["state"]["Kp"] = pid_Kp.value;
-        data["state"]["Ki"] = pid_Ki.value;
-        data["state"]["Kd"] = pid_Kd.value;
+        data["state"]["setT"] = parseFloat(setTemp.value);
+        data["state"]["dt"] = parseFloat(dt.value);
+        data["state"]["Kp"] = parseFloat(pid_Kp.value);
+        data["state"]["Ki"] = parseFloat(pid_Ki.value);
+        data["state"]["Kd"] = parseFloat(pid_Kd.value);
         data["action"] = startType;
         xR.open("POST", "startCtrl", true);
         xR.setRequestHeader("Cache-Control", "no-cache, no-store, max-age=0")
@@ -258,7 +258,8 @@
                 // console.log("T_data:", data['T_data']);
                 // console.log("typeof(chart)", typeof chart);
 
-                updateGraph(data['T_data'], data['T_long']);
+                // updateGraph(data['T_data'], data['T_long']);
+                updateGraph(data['state']);
 
                 // if (typeof chart === 'undefined') {
                 //     drawGraph(data['T_data'], data['T_long']);
@@ -277,7 +278,10 @@
         xR.send(JSON.stringify(data));
     }
 
-    function updateGraph(T_data, T_long){
+    function updateGraph(state){
+        let T_data = state['T_data'] 
+        let T_long = state['T_long']
+        let setT = state['setT']
         T_data_set = [];
 
         let runTime = T_data[T_data.length-1][0];
@@ -311,8 +315,8 @@
         console.log('T_data_set:', T_data_set);
 
         let setT_data = [
-            {x:0,y:Tset}, 
-            {x:d['x'], y:Tset}
+            {x:0,y:setT}, 
+            {x:d['x'], y:setT}
         ];
         chart.data.datasets[1]['data'] = setT_data;
         
