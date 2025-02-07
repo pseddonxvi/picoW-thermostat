@@ -7,6 +7,6 @@ Note: Setting up to save data file (circuitpython) (the boot.py file)
 
 This fork adds upgrades to the hardware design. It includes a new laser-cut box design that moves the RPi Pico W to the center. It also has cutouts for two 3.5mm aux jacks that allow for different sensor modules to be plugged in to both 3V and 5V.
 
-3V = GP9
+3V = GP27
 
 5V = GP22
