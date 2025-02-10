@@ -28,9 +28,9 @@ from DS18x20.uDS18x20 import *
 # DS18x20 Wiring:
 #   Red: 3.3 V (3V0)
 #   Black: Ground
-#   Yellow: Data: GP5 (default)
+#   Yellow: Data: GP27 (default)
 
-thermo = uDS18X20(board.GP5)
+thermo = uDS18X20(board.GP27)
 T = thermo.read()
 print(f"Temperature = {T}")
 
